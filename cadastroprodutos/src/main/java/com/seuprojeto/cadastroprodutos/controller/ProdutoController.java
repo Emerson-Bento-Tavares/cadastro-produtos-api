@@ -48,4 +48,9 @@ public class ProdutoController {
     public void excluirProduto(@PathVariable Long id) {
         produtoService.excluir(id);
     }
+
+    @GetMapping("/{id}/desconto")
+    public Double calcularDesconto(@PathVariable Long id) {
+        return produtoService.calcularPrecoComDesconto(id);
+    }
 }

@@ -1,13 +1,16 @@
 package com.seuprojeto.cadastroprodutos.service;
 
 import com.seuprojeto.cadastroprodutos.Produto;
+import com.seuprojeto.cadastroprodutos.Strategy.Desconto10Strategy;
 import com.seuprojeto.cadastroprodutos.repository.ProdutoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
 public class ProdutoService {
+    @Autowired
+    private Desconto10Strategy descontoStrategy;
 
     private final ProdutoRepository produtoRepository;
 
@@ -15,17 +18,14 @@ public class ProdutoService {
         this.produtoRepository = produtoRepository;
     }
 
-
     public List<Produto> listarTodos() {
         return produtoRepository.findAll();
     }
-
 
     public Produto buscarPorId(Long id) {
         return produtoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
     }
-
 
     public Produto salvar(Produto produto) {
 
@@ -66,5 +66,13 @@ public class ProdutoService {
         if (produto.getPreco() == null || produto.getPreco() <= 0) {
             throw new RuntimeException("Preço deve ser maior que zero");
         }
+    }
+    public Double calcularPrecoComDesconto(Long id) {
+
+        Produto produto = produtoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+
+        return descontoStrategy.calcularDesconto(produto.getPreco());
+
     }
 }
